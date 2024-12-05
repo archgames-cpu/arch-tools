@@ -1,0 +1,22 @@
+{
+  "name": "arch-tools",
+  "version": "1.0.0",
+  "description": "",
+  "main": "server.js",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "disable-devtool": "^0.3.8",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "http-server": "^14.1.1",
+    "wrangler": "^3.91.0"
+  }
+}

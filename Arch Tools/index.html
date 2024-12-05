@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arch Tools</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css"> <!-- Font Awesome -->
+    <script disable-devtool-auto src='https://cdn.jsdelivr.net/npm/disable-devtool@latest'></script>
+    <style>
+        /* Existing styles */
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background: linear-gradient(to bottom, #c7b8ea, #6c5ce7);
+            overflow: hidden; /* Prevent scrolling during animation */
+        }
+        .container {
+            display: flex;
+            flex-direction: row;
+            gap: 20px;
+            align-items: center; /* Center the buttons vertically */
+        }
+        .example-button, .member-botter-button {
+            position: relative; /* Added for positioning the ripple effect */
+            padding: 20px 40px; /* Increased padding for larger buttons */
+            border: none;
+            border-radius: 10px; /* Increased border radius for smoother corners */
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+            background-color: #3b0b59; /* Dark purple */
+            color: white;
+            font-size: 24px; /* Increased font size */
+        }
+        .member-botter-button {
+            font-size: 28px; /* Even larger font size for Member Botter button */
+            padding: 25px 50px; /* Increased padding for Member Botter button */
+        }
+        .example-button:hover, .member-botter-button:hover {
+            transform: scale(1.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .example-button:hover, .member-botter-button:hover {
+            background-color: #2a034a; /* Slightly lighter dark purple on hover */
+        }
+        .ripple-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-color: rgba(255, 255, 255, 0.3); /* White with 30% opacity */
+            border-radius: 10px;
+            transform: scale(0);
+            transition: transform 0.5s;
+        }
+        .example-button:hover .ripple-effect, .member-botter-button:hover .ripple-effect {
+            transform: scale(1);
+        }
+        /* New styles for the circular box and alert */
+        .discord-box {
+            display: inline-block; /* Make it an inline-block element */
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: #3b0b59; /* Match the color of other buttons */
+            cursor: pointer;
+            transition: transform 0.3s;
+        }
+        .discord-box:hover {
+            transform: scale(1.1);
+        }
+        .discord-box i {
+            color: white;
+            font-size: 24px;
+            position: absolute; /* Center the icon */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+        }
+        .discord-box .ripple-effect {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            pointer-events: none;
+            background-color: rgba(255, 255, 255, 0.3); /* White with 30% opacity */
+            border-radius: 50%; /* Make the ripple effect circular */
+            transform: scale(0);
+            transition: transform 0.5s;
+        }
+        .discord-box:hover .ripple-effect, .discord-box .ripple-effect.animate {
+            transform: scale(1);
+        }
+        .alert-container {
+            position: fixed;
+            top: 10px;
+            right: 10px;
+        }
+        .alert-box {
+            position: relative;
+            background-color: black;
+            color: white;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: 'Arial', sans-serif;
+            margin-bottom: 10px;
+            transition: right 0.5s ease-in-out, opacity 0.5s ease-in-out;
+            right: -200px; /* Start off-screen */
+            opacity: 0;
+        }
+        .alert-box.show {
+            right: 10px; /* Slide in from the corner */
+            opacity: 1;
+        }
+        .alert-box.hide {
+            right: -200px; /* Slide back out */
+            opacity: 0;
+        }
+        .alert-box .close {
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            cursor: pointer;
+        }
+        .alert-box .progress-bar {
+            width: 100%;
+            height: 5px;
+            background-color: #333;
+            border-radius: 2px;
+            overflow: hidden;
+        }
+        .alert-box .progress-bar .progress {
+            width: 0%;
+            height: 100%;
+            background-color: #fff;
+            transition: width 2s linear;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="https://discord.com/users/1292558383286849580" target="_blank">
+            <div class="discord-box">
+                <span class="ripple-effect"></span>
+                <i class="fa fa-discord"></i>
+            </div>
+        </a>
+        <button class="example-button" onclick="handleButtonClick('/server-nuker')">
+            <span class="ripple-effect"></span>
+            <i class="fa fa-bomb"></i> Server Nuker
+        </button>
+        <button class="member-botter-button" onclick="handleButtonClick('/member-botter')">
+            <span class="ripple-effect"></span>
+            <i class="fa fa-users"></i> Member Botter
+        </button>
+        <button class="example-button" onclick="handleButtonClick('/mass-reporter')">
+            <span class="ripple-effect"></span>
+            <i class="fa fa-flag"></i> Mass Reporter
+        </button>
+    </div>
+    <button style="position: fixed; bottom: 0; right: 0; margin-left:-10%" onclick="handleButtonClick('/devportal')">
+        <i class="fa fa-dashboard"></i> Dev Portal
+    </button>
+    <div class="alert-container" id="alert-container"></div>
+    <!-- Closing boxes -->
+    <div class="box left-box"></div>
+    <div class="box right-box"></div>
+    <div class="glow-effect" id="glow-effect"></div>
+    <script>
+        function handleButtonClick(path) {
+            // Trigger closing boxes animation
+            document.body.classList.add('loading');
+            setTimeout(() => {
+                window.location.href = path;
+            }, 500); // Adjust the timeout to match your CSS transition duration
+            showAlert(); // Show alert on button click
+        }
+
+        // Disable right-click and keyboard shortcuts
+        document.addEventListener('contextmenu', (e) => e.preventDefault());
+        document.onkeydown = (e) => {
+            if (e.keyCode === 123 || // F12
+                (e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0)) || // Ctrl + Shift + I
+                (e.ctrlKey && e.shiftKey && e.keyCode === 'J'.charCodeAt(0)) || // Ctrl + Shift + J
+                (e.ctrlKey && e.keyCode === 'U'.charCodeAt(0)) // Ctrl + U
+            ) {
+                e.preventDefault();
+            }
+        };
+
+        // Temporarily remove DOM when inspector is opened
+        document.addEventListener('keydown', (e) => {
+            if (e.keyCode === 123 || (e.ctrlKey && e.shiftKey && e.keyCode === 'I'.charCodeAt(0))) {
+                const body = document.body;
+                const html = document.documentElement;
+                const temp = document.createElement('div');
+                temp.appendChild(body);
+                html.appendChild(temp);
+                setTimeout(() => {
+                    html.removeChild(temp);
+                    body.parentNode.appendChild(body);
+                }, 100);
+            }
+        });
+
+        // Ripple effect script for other buttons
+        document.querySelectorAll('.example-button, .member-botter-button').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const rect = this.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const ripple = this.querySelector('.ripple-effect');
+                if (ripple) {
+                    ripple.style.top = `${y}px`;
+                    ripple.style.left = `${x}px`;
+                    ripple.classList.add('animate');
+                    setTimeout(() => {
+                        ripple.classList.remove('animate');
+                    }, 500);
+                }
+            });
+        });
+
+        // Ripple effect for Discord button
+        document.querySelector('.discord-box').addEventListener('click', function() {
+            const ripple = this.querySelector('.ripple-effect');
+            if (ripple) {
+                ripple.classList.add('animate');
+                setTimeout(() => {
+                    ripple.classList.remove('animate');
+                }, 500);
+            }
+        });
+
+        // Glow effect script
+        document.addEventListener('mousemove', (e) => {
+            const glowEffect = document.getElementById('glow-effect');
+            glowEffect.style.top = `${e.clientY}px`;
+            glowEffect.style.left = `${e.clientX}px`;
+        });
+
+        function showAlert() {
+            const alertContainer = document.getElementById('alert-container');
+            const alertBox = document.createElement('div');
+            alertBox.className = 'alert-box';
+            alertBox.innerHTML = `
+                <span class="close" onclick="this.parentNode.classList.add('hide'); setTimeout(() => this.parentNode.remove(), 500);">X</span>
+                <p>This is a link to my Discord</p>
+                <div class="progress-bar">
+                    <div class="progress"></div>
+                </div>
+            `;
+            alertContainer.appendChild(alertBox);
+            // Show the alert box
+            setTimeout(() => {
+                alertBox.classList.add('show');
+                const progress = alertBox.querySelector('.progress');
+                progress.style.width = '100%';
+                setTimeout(() => {
+                    alertBox.classList.remove('show');
+                    alertBox.classList.add('hide');
+                    setTimeout(() => alertBox.remove(), 500);
+                }, 2000); // Duration of the progress bar
+            }, 0);
+        }
+
+        // Open Discord link on click
+        document.querySelector('.discord-box').addEventListener('click', function() {
+            window.open('https://discord.com/users/1292558383286849580', '_blank');
+        });
+    </script>
+</body>
+</html>
